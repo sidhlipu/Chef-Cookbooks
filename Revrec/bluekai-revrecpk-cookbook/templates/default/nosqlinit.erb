@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# chkconfig: 2345 55 25
+
+#/etc/rc.d/init.d/nosql
+
+KVHOME=<%= node[:install_nosql][:kvhome] %>
+KVHOME=<%= node[:install_nosql][:kvroot] %>
+case "$1" in
+stop)
+echo "Stoping NoSql..."
+     cd $KVHOME
+     rm -rf /var/lock/subsys/nosql
+     su -l nosql -c "nohup java -jar $KVHOME/lib/kvstore.jar stop -root $KVROOT >stopNoSQL.log 2>&1 & "
+;;
+start)
+echo "Starting NoSql..."
+     cd $KVHOME 
+     touch /var/lock/subsys/nosql
+     su -l nosql -c "nohup java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar start -root $KVROOT &" 
+;;
+esac
+

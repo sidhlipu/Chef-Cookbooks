@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# chkconfig: 2345 55 25
+WEBLOGIC_HOME=<%= node[:install_wls][:bea_home] %>/domains/revrec
+# source function library
+. /etc/rc.d/init.d/functions
+
+case "$1" in
+startAdmin)
+echo "Starting weblogic..."
+     cd $WEBLOGIC_HOME
+     $WEBLOGIC_HOME/bin/startWebLogic.sh &
+;;
+stopAdmin)
+echo "Stopping weblogic..."
+     cd $WEBLOGIC_HOME
+     $WEBLOGIC_HOME/bin/stopWebLogic.sh &
+;;
+startManaged)
+echo "Starting Managed..."
+     cd $WEBLOGIC_HOME
+     $WEBLOGIC_HOME/bin/startManagedWebLogic.sh revrec1 http://<%= node[:fqdn] %>:7001 &
+;;
+stopManaged)
+echo "Starting Managed Server..."
+     cd $WEBLOGIC_HOME
+     $WEBLOGIC_HOME/bin/stopManagedWebLogic.sh revrec1 http://<%= node[:fqdn] %>:7001 &
+;;
+startNodeManager)
+	cd $WEBLOGIC_HOME
+	$WEBLOGIC_HOME/bin/startNodeManager.sh &
+esac
+

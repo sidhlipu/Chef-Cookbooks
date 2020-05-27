@@ -1,0 +1,28 @@
+export ORACLE_HOME=<%= node[:install_oradb][:ora_home] %>
+export ORACLE_SID=<%= node[:install_oradb][:sid] %>
+export PATH=<%= node[:install_oradb][:path] %>
+export ORADATAPATH=<%= node[:install_oradb][:oradata_path] %>
+export USR='odirev'
+export PASS='odirev'
+export HOST=<%= node[:fqdn] %>
+export PORT=<%= node[:install_oradb][:ora_port] %>
+export SERV=<%= node[:install_oradb][:global_dbname] %>
+export SQLPATH=<%= node[:install_oradb][:sql_local_template] %>
+export ODI_TBS=<%= node[:install_odi][:odi_tablespace] %>
+export ODI_TEMP_TBS=<%= node[:install_odi][:odi_temp_tablespace] %>
+
+sqlplus / as sysdba << EOF
+SET ECHO ON;
+CREATE BIGFILE TABLESPACE odirev_app DATAFILE '$ORADATAPATH/orcl/odirevapp.dbf' SIZE 1G REUSE AUTOEXTEND ON MAXSIZE unlimited;
+CREATE BIGFILE TEMPORARY TABLESPACE odirev_temp TEMPFILE '$ORADATAPATH/orcl/odirevtmp.dbf' SIZE 1G REUSE AUTOEXTEND ON MAXSIZE unlimited;
+CREATE TABLESPACE $ODI_TBS DATAFILE '$ORADATAPATH/orcl/$ODI_TBS.dbf' size 200m autoextend on maxsize unlimited;
+CREATE TEMPORARY TABLESPACE $ODI_TEMP_TBS TEMPFILE '$ORADATAPATH/orcl/$ODI_TEMP_TBS.dbf' size 200m autoextend on maxsize unlimited;
+quit;
+EOF
+if [[ $? -ne 0 ]]
+then
+  echo "failed" > $ORADATAPATH/exectbspstatus
+else
+  echo "success" > $ORADATAPATH/exectbspstatus
+fi
+

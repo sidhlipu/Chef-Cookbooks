@@ -1,0 +1,68 @@
+#Reading Template
+readTemplate('<%= @BeaHome %>/common/templates/domains/wls.jar')
+
+
+# Security
+cd('/')
+cd('Security/base_domain/User/weblogic')
+cmo.setPassword('welcome1')
+
+# Start Up
+setOption('CreateStartMenu', 'false')
+setOption('ServerStartMode', 'prod')
+# Setting the JDK home. Change the path to your installed JDK for weblogic
+setOption('JavaHome','<%= node[:install_wls][:local_jvm] %>')
+setOption('OverwriteDomain', 'true')
+
+# Create Domain to File System
+print('Writing Domain To File System')
+# Change the path to your domain accordingly
+writeDomain('<%= node[:install_wls][:bea_home] %>/domains/revrec')
+closeTemplate()
+
+# Read the Created Domain
+print('Reading the Domain from In Offline Mode')
+readDomain('<%= node[:install_wls][:bea_home] %>/domains/revrec')
+
+
+# Admin Server 
+cd('Servers/AdminServer')
+set('ListenAddress','<%= node[:ipaddress] %>')
+set('ListenPort', 7001)
+
+# Creating Managed Servers
+cd('/')
+create('revrec1', 'Server')
+cd('Server/revrec1')
+set('ListenPort', 7005)
+set('ListenAddress', '<%= node[:ipaddress] %>')
+
+
+# Create and configure a cluster and assign the Managed Servers to that cluster.
+cd('/')
+create('revreccluster', 'Cluster')
+assign('Server', 'revrec1','Cluster','revreccluster')
+cd('Cluster/revreccluster')
+set('WeblogicPluginEnabled', 'true')
+
+# Create and configure a machine and assign the Managed Servers to that Machine
+cd('/')
+create('machine1', 'Machine')
+assign('Server', 'revrec1','Machine','machine1')
+cd('Machines/' + 'machine1/')
+create('machine1', 'NodeManager')
+cd('NodeManager/' + 'machine1')
+set('NMType', 'Plain')
+set('ListenAddress', '<%= node[:ipaddress] %>')
+set('ListenPort',5556)
+set('DebugEnabled', 'false')
+cd("/SecurityConfiguration/revrec")
+cmo.setNodeManagerUsername("weblogic")
+cmo.setNodeManagerPasswordEncrypted("welcome1")
+
+# updating the changes
+updateDomain()
+closeDomain()
+
+# Exiting
+exit()

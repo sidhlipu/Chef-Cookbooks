@@ -1,0 +1,14 @@
+<%=  node[:revrec_env][:java_bin] %> -Xmx256m -Xms256m -jar <%= node[:install_nosql][:kvstore_jar] %> runadmin -port 5000 -host <%= node[:fqdn] %> << EOF
+configure -name "mappingStore"
+plan deploy-zone -name "mappingZone" -rf 1 -wait
+plan deploy-sn -zn "zn1" -host <%= node[:fqdn] %> -port 5000 -wait
+plan deploy-admin -sn sn1 -port 5001 -wait
+pool create -name "mappingPool"
+pool join -name "mappingPool" -sn sn1
+topology create -name "mappingStoreLayout" -pool "mappingPool" -partitions 10
+topology preview -name "mappingStoreLayout"
+plan deploy-topology -name "mappingStoreLayout" -wait
+show  plan
+show topology
+verify
+EOF

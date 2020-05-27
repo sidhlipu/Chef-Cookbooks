@@ -1,0 +1,30 @@
+#!/bin/bash
+export ORACLE_HOME=<%= node[:install_oradb][:ora_home] %>
+export ORACLE_SID=<%= node[:install_oradb][:sid] %>
+export PATH=<%= node[:install_oradb][:path] %>
+export ORADATAPATH=<%= node[:install_oradb][:oradata_path] %>
+export USR="odirev"
+export PASS="odirev"
+export HOST=<%= node[:fqdn] %>
+export PORT=<%= node[:install_oradb][:ora_port] %>
+export SERV=<%= node[:install_oradb][:global_dbname] %>
+export SQLPATH=<%= node[:install_oradb][:sql_local_template] %>
+
+
+#connect ${USR}/${PASS}@${HOST}:${PORT}/${SERV}
+
+
+sqlplus ${USR}/${PASS}@${HOST}/${SERV} <<END
+@$SQLPATH
+quit;
+END
+if [[ $? -ne 0 ]]
+then
+  echo "failed" > $ORADATAPATH/exectablestatus
+else
+  echo "success" > $ORADATAPATH/exectablestatus
+fi
+
+#echo exit | sqlplus odirev/odirev @$SQLPATH
+
+

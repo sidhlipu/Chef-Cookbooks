@@ -1,0 +1,32 @@
+
+export ORACLE_HOME=<%= node[:install_oradb][:ora_home] %>
+export ORACLE_SID=<%= node[:install_oradb][:sid] %>
+export PATH=<%= node[:install_oradb][:path] %>
+export ORADATAPATH=<%= node[:install_oradb][:oradata_path] %>
+export USR='DAAS_APP'
+export PASS='daas_app'
+export HOST=<%= node[:fqdn] %>
+export PORT=<%= node[:install_oradb][:ora_port] %>
+export SERV=<%= node[:install_oradb][:global_dbname] %>
+
+#connect ${USR}/${PASS}@${HOST}:${PORT}/${SERV}
+
+
+sqlplus / as sysdba << EOF
+SET ECHO ON;
+create user odirev identified by odirev DEFAULT TABLESPACE odirev_app TEMPORARY TABLESPACE odirev_temp QUOTA UNLIMITED ON odirev_app;
+GRANT CREATE SESSION, CREATE TABLE,CREATE VIEW, CREATE TRIGGER,CREATE SEQUENCE,CREATE PROCEDURE,JAVAUSERPRIV,CREATE TYPE TO odirev;
+quit;
+EOF
+
+
+if [[ $? -ne 0 ]]
+then
+  echo "failed" > $ORADATAPATH/execusrstatus
+else
+  echo "success" > $ORADATAPATH/execusrstatus
+fi
+
+
+
+

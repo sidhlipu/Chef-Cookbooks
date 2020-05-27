@@ -1,0 +1,28 @@
+DomainsFile=<%= node[:install_wls][:bea_home] %>/domains/revrec/nodemanager.domains
+LogLimit=0
+PropertiesVersion=10.3
+AuthenticationEnabled=true
+NodeManagerHome=<%= node[:install_wls][:bea_home] %>/domains/revrec/
+JavaHome=<%= @JvmHome %>
+LogLevel=FINEST
+DomainsFileEnabled=true
+StartScriptName=startWebLogic.sh
+ListenAddress=10.245.178.201
+NativeVersionEnabled=true
+ListenPort=5556
+LogToStderr=true
+SecureListener=false
+LogCount=1
+StopScriptEnabled=false
+QuitEnabled=false
+LogAppend=true
+StateCheckInterval=500
+CrashRecoveryEnabled=false
+StartScriptEnabled=true
+LogFile=<%= node[:install_wls][:bea_home] %>/domains/revrec//nodemanager.log
+LogFormatter=weblogic.nodemanager.server.LogFormatter
+ListenBacklog=50
+DomainRegistrationEnabled=false
+RestartInterval=0
+RestartMax=10
+

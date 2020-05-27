@@ -1,0 +1,45 @@
+from java.io import FileInputStream
+import java.lang
+import os
+import string
+import socket
+import time
+
+sleep=time.sleep
+propInputStream = FileInputStream("domain.properties")
+configProps = Properties()
+configProps.load(propInputStream)
+
+Username = configProps.get("username")
+Password = configProps.get("password")
+Host = configProps.get("host")
+nmPort = configProps.get("nm.port")
+domainName = configProps.get("domain.name")
+domainDir = configProps.get("domain.dir")
+nmType = configProps.get("nm.type")
+ip=configProps.get("host")
+
+startNodeManager(verbose='true',NodeManagerHome=domainDir,ListenPort=nmPort,ListenAddress=ip,QuitEnabled='false')
+sleep(200)
+print ''
+print '============================================='
+print ' NODE MANAGER started Successfully...!!!'
+print '============================================='
+print ''
+nmConnect('weblogic','welcome1',ip,'5556','revrec',domainDir,nmType)
+print ''
+print '============================================='
+print 'Connected to NODE MANAGER Successfully...!!!'
+print '============================================='
+print ''
+prps = makePropertiesObject("Username=weblogic;Password=welcome1")
+nmStart('AdminServer',props=prps)
+print '============================================='
+print ' Admin Server  started Successfully...!!!'
+print '============================================='
+url='t3://'+ip+':7001'
+connect('weblogic','welcome1',url)
+start('revrec1','Server')
+print '============================================='
+print ' Managed Server started Successfully...!!!'
+
